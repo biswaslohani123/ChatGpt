@@ -16,8 +16,8 @@ const SIdeBar = ({isMenuOpen, setIsMenuOpen}) => {
       <img onClick={() => {navigate('/')}} src={theme === 'dark' ? assets.logo_full: assets.logo_full_dark} alt=""  className='w-full max-w-48'/>
 
     {/* New Chat Button */}
-    <button className='flex justify-center items-center bg-gradient-to-r from-[#A456F7] to-[#3D81F6] w-full py-2 mt-10 text-white text-sm rounded-md cursor-pointer'>
-        <span className='mr-2 text-xl'>+</span> New Chat
+    <button  className='flex justify-center items-center bg-gradient-to-r from-[#A456F7] to-[#3D81F6] w-full py-2 mt-10 text-white text-sm rounded-md cursor-pointer'>
+        <span  className='mr-2 text-xl'>+</span> New Chat
     </button>
 
     {/* Search Box */}
