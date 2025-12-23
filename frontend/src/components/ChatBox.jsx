@@ -2,12 +2,13 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useAppContext } from '../context/AppContext'
 import { assets } from '../assets/assets';
 import Message from './Message';
+import toast from 'react-hot-toast';
 
 const ChatBox = () => {
 
     const containerRef = useRef(null)
 
-    const {selectedChats, theme} = useAppContext();
+    const {selectedChats, theme,user, axios, token,setUser} = useAppContext();
 
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -18,7 +19,45 @@ const ChatBox = () => {
 
 
     const onSubmit = async (e) => {
-        e.preventDefault()
+        e.preventDefault();
+
+        try {
+            e.preventDefault()
+            if (!user) return toast('Login to send Message')
+
+                setLoading(true)
+
+            const promptCopy = prompt
+            setPrompt('')
+            setMessages(prev => [...prev, {role: 'user', content: prompt, timestamp: Date.now(), isImage: false 
+            }])
+
+            const {data} = await axios.post(`/api/message/${mode}`, {chatId:selectedChats._id, prompt, isPublished }, {headers: {Authorization: token}})
+
+            if (data.success) {
+
+                setMessages(prev => [...prev, data.reply])
+                // decreade credits
+                if (mode === 'image') {
+
+                    setUser(prev => ({...prev, credits: prev.credits -2}))
+                    
+                }else{
+                     setUser(prev => ({...prev, credits: prev.credits -1}))
+                }
+                
+            }else{
+                toast.error(data.message)
+                 setPrompt(promptCopy)
+            }
+        } catch (error) {
+            toast.error(error.message)
+           
+        }
+        finally{
+            setPrompt('')
+            setLoading(false)
+        }
     }
 
     useEffect(() => {
@@ -38,7 +77,7 @@ const ChatBox = () => {
             })
             
         }
-    },[])
+    },[messages])
 
   return (
     <div className='flex flex-1 flex-col justify-between m-5 md:m-10 xl:mx-30 max-md:mt-14 2xl:pr-40'>
