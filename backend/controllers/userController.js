@@ -89,5 +89,34 @@ const getUser = async (req, res) => {
     }
 }
 
+// Api to get published images
 
-export {registerUser, LoginUser, getUser}
+const getPublishedImages = async (req, res) => {
+    try {
+        const publishedImageMessages = await Chat.aggregate([
+            {$unwind: "$messages"},
+            {
+                $match: {
+                    "messages.isImage": true,
+                    "messages.isPublished": true
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    imageUrl: "$messages.content",
+                    userName: "$userName"
+                }
+            }
+        ]) 
+
+
+        res.json({success: true, images: publishedImageMessages.reverse()})
+
+    } catch (error) {
+        return res.json({success: false, message: error.message})
+    }
+}
+
+
+export {registerUser, LoginUser, getUser, getPublishedImages}
